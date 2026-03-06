@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MyAppointment
+
+A full stack appointment booking app built with Next.js and PostgreSQL. Patients can view upcoming appointments, book new ones, and delete them. I built this project to get hands-on with relational databases and SQL after spending most of my bootcamp working with MongoDB.
+
+## Tech Stack
+
+- Next.js 16 (App Router)
+- React
+- PostgreSQL
+- Node.js
+
+## Features
+
+- View all appointments with patient name, doctor, specialty, date, and reason
+- Book a new appointment using existing patients and doctors
+- Delete an appointment
+- Data pulled via a JOIN query across three related tables
 
 ## Getting Started
 
-First, run the development server:
-
+Clone the repo and install dependencies:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/BHaenelt/myAppointment.git
+cd myAppointment
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Create a `.env.local` file in the root with your database connection:
+DATABASE_URL=your_postgresql_connection_string
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Run the development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Learn More
+## Database Setup
 
-To learn more about Next.js, take a look at the following resources:
+This app uses three tables. Run the following in psql to set them up:
+```sql
+CREATE TABLE patients (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL
+);
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+CREATE TABLE doctors (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(100) NOT NULL,
+  specialty VARCHAR(100)
+);
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+CREATE TABLE appointments (
+  id SERIAL PRIMARY KEY,
+  patient_id INTEGER REFERENCES patients(id),
+  doctor_id INTEGER REFERENCES doctors(id),
+  appointment_date DATE,
+  reason TEXT
+);
+```
 
-## Deploy on Vercel
+## Why I Built This
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+My two larger projects (ShiftSync and MediSchedule) both use MongoDB. I wanted to show I could work with relational databases too, so I built this app from scratch using PostgreSQL and raw SQL queries. The main GET endpoint uses a JOIN across all three tables to return full appointment details in a single query.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
